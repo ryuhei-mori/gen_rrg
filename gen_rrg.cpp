@@ -19,12 +19,13 @@ int main(){
   for(int i = 0; i < n*d; i++){
     a.push_back(i%n);
   }
-//  std::random_shuffle(a.begin(), a.end());
 
-  std::shuffle(a.begin(), a.end(), std::mt19937(seed));
 
   do {
     std::vector<int>::iterator it;
+
+//  std::random_shuffle(a.begin(), a.end());
+    std::shuffle(a.begin(), a.end(), std::mt19937(seed));
     for(it = a.begin(); it != a.end() && it + 1 != a.end();){
       std::pair<int, int> edge(*it, *(it+1));
       if(*it == *(it+1) || edges.count(edge)) { r.push_back(*it); ++it; }
