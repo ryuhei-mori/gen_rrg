@@ -11,30 +11,39 @@ int main(){
   std::set<std::pair<int,int> > edges;
   std::vector<int> a;
   std::vector<int> r;
+  std::size_t os, ns;
 
   scanf("%d %d %d", &seed, &n, &d);
-
   if((n*d)&0x1) return 1;
 
-  for(int i = 0; i < n*d; i++){
-    a.push_back(i%n);
-  }
-
+  std::mt19937 gen(seed);
 
   do {
-    std::vector<int>::iterator it;
-
-//  std::random_shuffle(a.begin(), a.end());
-    std::shuffle(a.begin(), a.end(), std::mt19937(seed));
-    for(it = a.begin(); it != a.end() && it + 1 != a.end();){
-      std::pair<int, int> edge(*it, *(it+1));
-      if(*it == *(it+1) || edges.count(edge)) { r.push_back(*it); ++it; }
-      else { edges.insert(edge); it+=2; }
-    }
-    if(it != a.end()) { r.push_back(*it); }
+    edges.clear();
     a.clear();
-    r.swap(a);
-  } while(!a.empty());
+    for(int i = 0; i < n*d; i++){
+      a.push_back(i%n);
+    }
+    os = ns = n*d;
+    do {
+      std::vector<int>::iterator it;
+
+//    std::cout << a.size() << std::endl;
+
+//    std::random_shuffle(a.begin(), a.end());
+      std::shuffle(a.begin(), a.end(), gen);
+      for(it = a.begin(); it != a.end(); it+=2){
+//        std::pair<int, int> edge(std::min(*it, *(it+1)), std::max(*it, *(it+1)));
+        std::pair<int, int> edge(std::minmax(*it, *(it+1)));
+        if(*it == *(it+1) || edges.count(edge)) { r.push_back(*it); r.push_back(*(it+1)); }
+        else { edges.insert(edge); }
+      }
+      a.clear();
+      r.swap(a);
+      os = ns;
+      ns = a.size();
+    } while(ns != 0 && ns != os);
+  } while(ns != 0);
 
   for(std::set<std::pair<int, int> >::iterator it = edges.begin(); it != edges.end(); ++it){
     std::cout << (*it).first << " " << (*it).second << std::endl;
